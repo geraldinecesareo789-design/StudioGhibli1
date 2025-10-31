@@ -1,0 +1,249 @@
+
+body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('pxfuel.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #222;
+    transition: background-color 0.3s, color 0.3s;
+}
+body.dark-mode {
+    background-color: #111;
+    background-image: url('negro.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #f0f0f0;
+}
+body.dark-mode .pelicula {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+}
+body.dark-mode header {
+    background-color: rgba(20, 20, 20, 0.8);
+}
+body.dark-mode input,
+body.dark-mode button {
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #555;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+}
+header img {
+    height: 60px;
+}
+.header-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+#search-bar {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    outline: none;
+}
+button {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+}
+button:hover {
+    background-color: #357ABD;
+}
+.container-title {
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    text-shadow: 2px 2px 4px #000;
+}
+.peliculas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+.pelicula {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.pelicula:hover {
+    transform: scale(1.03);
+}
+.pelicula img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+.pelicula h2 {
+    margin: 10px;
+    font-size: 1.2em;
+}
+.pelicula p {
+    margin: 8px 10px;
+}
+#load-more {
+    display: block;
+    margin: 20px auto;
+}
+.modal-hidden {
+    display: none;
+}
+
+.modal-visible {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+}
+
+.modal-backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    top: 0; left: 0;
+}
+
+.modal-content {
+    background: white; 
+    position: relative;
+    z-index: 101;
+    border-radius: 12px;
+    max-width: 700px;
+    width: 90%;
+    overflow: hidden;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-banner {
+    background-size: cover;
+    background-position: center;
+    height: 200px;
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    color: white;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+}
+
+
+.people-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+body.dark-mode .person-card {
+    background-color: rgba(50, 50, 50, 0.9);
+    color: #f0f0f0;
+}
+
+body.dark-mode .person-card p {
+    color: #f0f0f0;
+}
+
+.person-card {
+    text-align: center;
+    background-color: #f3f3f3;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.person-card img {
+    width: 80px;
+    height: 80px;
+}
+
+/* DARK MODE COMPLETO */
+.dark-mode {
+    background: #1c1c1c url('https://wallpaper.dog/large/20427463.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #f0f0f0;
+}
+
+.dark-mode header {
+    background-color: rgba(20,20,20,0.8);
+}
+
+.dark-mode .pelicula {
+    background-color: rgba(40,40,40,0.9);
+}
+
+.dark-mode button {
+    background-color: #ff7f50;
+}
+
+.dark-mode button:hover {
+    background-color: #e5673f;
+}
+
+/* MODAL EN DARK MODE */
+body.dark-mode .modal-content {
+    background-color: rgba(30, 30, 30, 0.95); /* Fondo oscuro casi sólido */
+    color: #f0f0f0; /* Texto visible */
+}
+
+body.dark-mode .modal-body p,
+body.dark-mode .modal-body h2,
+body.dark-mode .modal-body h3,
+body.dark-mode .modal-meta {
+    color: #f0f0f0; /* Asegura visibilidad del texto */
+}
+
+body.dark-mode .modal-close {
+    color: #fff; /* Botón de cerrar visible */
+}
+
+/* FIGURAS FIJAS */
+.totoro {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 50px;
+}
+
+.calcifer {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    width: 50px;
+}

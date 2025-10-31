@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Studio Ghibli Films</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="shadow">
+    <div class="container-logo">
+      <img src="studio-ghibli.jpg" alt="Logo de Studio Ghibli">
+    </div>
+    <div class="header-buttons">
+      <input type="text" id="search-bar" placeholder="Buscar película..." />
+      <button id="dark-mode">Dark Mode</button>
+    </div>
+  </header>
+  <section class="container-title">
+    <h1>Studio Ghibli Films</h1>
+  </section>
+  <section class="peliculas" id="container-peliculas"></section>
+  <button id="load-more">Mostrar películas</button>
+  <div id="modal" class="modal-hidden" aria-hidden="true">
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button id="modal-close" class="modal-close">✕</button>
+      <div class="modal-banner" id="modal-banner"></div>
+      <div class="modal-body">
+        <h2 id="modal-title"></h2>
+        <p class="modal-meta"><strong>Director:</strong> <span id="modal-director"></span></p>
+        <p class="modal-meta"><strong>Productor:</strong> <span id="modal-producer"></span></p>
+        <p class="modal-meta"><strong>Año:</strong> <span id="modal-year"></span> — <strong>Puntuación:</strong> <span id="modal-score"></span></p>
+        <p id="modal-description" class="modal-description"></p>
+        <hr>
+        <h3 class="modal-subtitle">Personajes:</h3>
+        <div id="modal-people" class="people-grid">
+          <p>Cargando personajes...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <img src="toto.ico" alt="Totoro" class="totoro">
+  <img src="favicon.ico" alt="Calcifer" class="calcifer">
+  <script>
+    let filmsData = [];
+    let filteredFilms = [];
+    function renderLoader() {
+      const container = document.getElementById('container-peliculas');
+      const loader = document.createElement('div');
+      loader.setAttribute('id', 'loader');
+      loader.innerHTML = 'Cargando...';
+      container.appendChild(loader);
+    }
+    function removeLoader() {
+      const loader = document.getElementById('loader');
+      if (loader) loader.remove();
+    }
+    async function get_peliculas() {
+      const url = 'https://ghibliapi.vercel.app/films';
+      renderLoader();
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        filmsData = data.slice(0, 15);
+        filteredFilms = [...filmsData];
+        removeLoader();
+        renderPeliculas();
+      } catch (err) {
+        removeLoader();
+        document.getElementById('container-peliculas').innerHTML = '<p class="error">Error al cargar las películas.</p>';
+      }
+    }
+    function renderPeliculas() {
+      const container = document.getElementById('container-peliculas');
+      container.innerHTML = '';
+
+      if (filteredFilms.length === 0) {
+        container.innerHTML = '<p class="no-results">No se encontraron películas.</p>';
+        return;
+      }
+      filteredFilms.forEach(film => {
+        const card = document.createElement('div');
+        card.classList.add('pelicula');
+        card.setAttribute('data-id', film.id);
+
+        const img = document.createElement('img');
+        img.src = film.image || film.movie_banner || 'https://via.placeholder.com/400x300?text=No+image';
+        img.alt = film.title;
+
+        const title = document.createElement('h2');
+        title.textContent = film.title;
+
+        const year = document.createElement('p');
+        year.innerHTML = `<strong>Año:</strong> ${film.release_date}`;
+
+        const director = document.createElement('p');
+        director.innerHTML = `<strong>Director:</strong> ${film.director}`;
+
+        const desc = document.createElement('p');
+        desc.textContent = film.description.slice(0, 100) + '...';
+
+        card.append(img, title, year, director, desc);
+        card.addEventListener('click', () => showDetails(film.id));
+        container.appendChild(card);
+      });
+    }
+    const randomAvatar = () =>
+      `https://api.dicebear.com/9.x/adventurer/svg?seed=${Math.floor(Math.random() * 10000)}`;
+    async function showDetails(id) {
+      const film = filmsData.find(f => f.id === id);
+      if (!film) return;
+      const bannerUrl = film.movie_banner || film.image || 'https://via.placeholder.com/1200x400?text=No+banner';
+      document.getElementById('modal-banner').style.backgroundImage = `url('${bannerUrl}')`;
+      document.getElementById('modal-title').textContent = film.title;
+      document.getElementById('modal-director').textContent = film.director;
+      document.getElementById('modal-producer').textContent = film.producer;
+      document.getElementById('modal-year').textContent = film.release_date;
+      document.getElementById('modal-score').textContent = film.rt_score;
+      document.getElementById('modal-description').textContent = film.description;
+      const peopleContainer = document.getElementById('modal-people');
+      peopleContainer.innerHTML = '<p>Cargando personajes...</p>';
+      try {
+        const allPeople = await fetch('https://ghibliapi.vercel.app/people').then(r => r.json());
+        const relatedPeople = allPeople.filter(p => p.films.includes(`https://ghibliapi.vercel.app/films/${id}`));
+        renderPeopleList(relatedPeople);
+      } catch {
+        peopleContainer.innerHTML = '<p>Error al cargar personajes.</p>';
+      }
+      const modal = document.getElementById('modal');
+      modal.classList.remove('modal-hidden');
+      modal.classList.add('modal-visible');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+    function renderPeopleList(people) {
+      const peopleContainer = document.getElementById('modal-people');
+      peopleContainer.innerHTML = '';
+      if (people.length === 0) {
+        peopleContainer.innerHTML = '<p>No hay personajes disponibles.</p>';
+        return;
+      }
+      people.forEach(person => {
+        const card = document.createElement('div');
+        card.classList.add('person-card');
+        const img = document.createElement('img');
+        img.src = randomAvatar();
+        img.alt = person.name;
+        const name = document.createElement('p');
+        name.textContent = person.name;
+        card.append(img, name);
+        peopleContainer.appendChild(card);
+      });
+    }
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.remove('modal-visible');
+      modal.classList.add('modal-hidden');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+    document.getElementById("load-more").addEventListener("click", get_peliculas);
+    const searchBar = document.getElementById("search-bar");
+    searchBar.addEventListener("input", (e) => {
+      const term = e.target.value.toLowerCase();
+      filteredFilms = filmsData.filter(film =>
+        film.title.toLowerCase().includes(term)
+      );
+      renderPeliculas();
+    });
+    
+    document.getElementById("dark-mode").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+      document.getElementById("dark-mode").textContent = 
+        document.body.classList.contains("dark-mode") ? "Clear Mode" : "Dark Mode";
+    });
+    get_peliculas();
+  </script>
+</body>
+</html>
